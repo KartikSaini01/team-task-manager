@@ -4,24 +4,43 @@ const cors = require("cors");
 require("dotenv").config();
 
 const app = express();
-app.use(express.json());
+
+
+// MIDDLEWARE
 app.use(cors());
 
-// ✅ Root route (important for Railway)
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
+app.use(express.static("public"));
 
-// DB
+app.use(express.json());
+
+
+// DATABASE CONNECTION
 mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("✅ MongoDB Connected"))
-.catch(err => console.log("❌ DB Error:", err));
 
-// Routes
+.then(() => console.log("MongoDB Connected"))
+
+.catch(err => console.log("DB Error:", err));
+
+
+// ROUTES
 app.use("/auth", require("./routes/auth"));
-app.use("/projects", require("./routes/project"));
+
 app.use("/tasks", require("./routes/task"));
 
-// PORT FIX FOR RAILWAY
+
+// HOME ROUTE
+app.get("/", (req, res) => {
+
+  res.send("Team Task Manager API Running");
+
+});
+
+
+// PORT
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log("Server running on " + PORT));
+
+app.listen(PORT, () => {
+
+  console.log(`Server running on ${PORT}`);
+
+});
